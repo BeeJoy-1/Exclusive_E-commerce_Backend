@@ -91,4 +91,121 @@ const GetFlashSaleProducts = async (req, res) => {
   }
 };
 
-module.exports = { FlashSaleController, GetFlashSaleProducts };
+//Update FlashSale Products
+const UpdateFlashSaleProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const UpdateProduct = await FlashSaleModel.findOneAndUpdate(
+      {
+        _id: id,
+      },
+      {
+        ...req.body,
+      },
+      {
+        new: true,
+      }
+    );
+    if (UpdateProduct) {
+      return res
+        .status(200)
+        .json(
+          new ApiResponse(
+            true,
+            UpdateProduct,
+            200,
+            "Got the Updated Product!",
+            null
+          )
+        );
+    }
+    return res
+      .status(404)
+      .json(new ApiError(false, null, 400, `Couldnt Fetch The Products!`));
+  } catch (error) {
+    return res
+      .status(404)
+      .json(
+        new ApiError(
+          false,
+          null,
+          400,
+          `Update FlashSale Product Controller Error : ${error}`
+        )
+      );
+  }
+};
+
+//Delete Product
+const DeleteFlashSaleProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const DeleteProduct = await FlashSaleModel.findByIdAndDelete({ _id: id });
+    if (DeleteProduct) {
+      return res
+        .status(200)
+        .json(
+          new ApiResponse(true, DeleteProduct, 200, "Product Deleted!", null)
+        );
+    }
+    return res
+      .status(404)
+      .json(new ApiError(false, null, 400, `Couldnt Fetch The Product!`));
+  } catch (error) {
+    return res
+      .status(404)
+      .json(
+        new ApiError(
+          false,
+          null,
+          400,
+          `Delete Product Controller Error ${error}!`
+        )
+      );
+  }
+};
+
+//Single Product
+const SingleFlashProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const SingleProduct = await FlashSaleModel.findOne({ _id: id }).populate(
+      "ProductID"
+    );
+    if (SingleProduct) {
+      return res
+        .status(200)
+        .json(
+          new ApiResponse(
+            true,
+            SingleProduct,
+            200,
+            "Got the Single Product",
+            null
+          )
+        );
+    }
+    return res
+      .status(404)
+      .json(new ApiError(false, null, 400, `Couldnt Get the single Product!`));
+  } catch (error) {
+    return res
+      .status(404)
+      .json(
+        new ApiError(
+          false,
+          null,
+          400,
+          `SingleFlash Product Controller Error ${error}!`
+        )
+      );
+  }
+};
+
+module.exports = {
+  FlashSaleController,
+  GetFlashSaleProducts,
+  UpdateFlashSaleProduct,
+  DeleteFlashSaleProduct,
+  SingleFlashProduct,
+};
