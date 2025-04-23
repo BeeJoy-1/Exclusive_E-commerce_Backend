@@ -55,7 +55,7 @@ const GetFlashSaleProducts = async (req, res) => {
         //If we dont want to show certain fields we need to populate in this way so that we can use the Select attribute and also for Nested populate
         path: "ProductID",
         populate: "Category",
-        select: "-Description -Review -Owner -Store",
+        select: "-Description -Owner -Store",
       })
       .lean();
 
