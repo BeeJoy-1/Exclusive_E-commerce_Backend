@@ -6,6 +6,7 @@ const {
   DeleteImageCloudinary,
 } = require("../Utils/Cloudinary.js");
 const NodeCache = require("node-cache");
+const { CategoryModel } = require("../Model/Category.model.js");
 const myCache = new NodeCache();
 
 //Create Product Controller
@@ -50,6 +51,10 @@ const CreateProductController = async (req, res) => {
     }).save();
 
     if (SaveData) {
+      //Push Product into Category model
+      const Category = await CategoryModel.findById(req.body.Category);
+      Category.Product.push(SaveData._id);
+      await Category.save();
       //Delete Cache Memory
       myCache.del("AllProduct");
       return res
