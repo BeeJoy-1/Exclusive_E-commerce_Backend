@@ -36,6 +36,7 @@ const UploadCloudinary = async (localfilePath = "public\\temp\\black.jpg") => {
 //Delete Image from Cloudinary
 const DeleteImageCloudinary = async (imagePath) => {
   try {
+    let DeletedCloudItem = [];
     for (let CloudName of imagePath) {
       const allArr = CloudName.split("/");
       const CloudImageName = allArr[allArr?.length - 1].split(".")[0];
@@ -46,8 +47,10 @@ const DeleteImageCloudinary = async (imagePath) => {
           resource_type: "image",
         }
       );
+      DeletedCloudItem.push(DeletedItem);
       // console.log("Deleted items : ", DeletedItem);
     }
+    return DeletedCloudItem;
   } catch (error) {
     console.log("From Cloudinary Delete error: ", error);
   }

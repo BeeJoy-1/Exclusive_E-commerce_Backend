@@ -260,10 +260,50 @@ const SearchProduct = async (req, res) => {
   }
 };
 
+//Delete Product Controller
+const DeleteProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const DeletedItem = await ProductModel.findOneAndDelete({ _id: id });
+    if (DeletedItem) {
+      //Delete Cloudinary image
+      const CloudinaryDelete = await DeleteImageCloudinary(DeletedItem?.Image);
+
+      //Search Category and delete the product from category
+      const CategoryDel = await CategoryModel.findById(DeletedItem.Category);
+      CategoryDel.Product.pull(DeletedItem._id);
+      await CategoryDel.save();
+    }
+    return res
+      .status(202)
+      .json(
+        new ApiResponse(
+          true,
+          DeletedItem,
+          200,
+          "Deleted The Searched Product!",
+          null
+        )
+      );
+  } catch (error) {
+    return res
+      .status(404)
+      .json(
+        new ApiError(
+          false,
+          null,
+          400,
+          ` Delete Product Controller Error : ${error}`
+        )
+      );
+  }
+};
+
 module.exports = {
   CreateProductController,
   GetAllProduct,
   UpdateProduct,
   SingleProduct,
   SearchProduct,
+  DeleteProduct,
 };

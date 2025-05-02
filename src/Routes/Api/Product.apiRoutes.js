@@ -8,6 +8,7 @@ const {
   UpdateProduct,
   SingleProduct,
   SearchProduct,
+  DeleteProduct,
 } = require("../../Controller/Product.controller");
 
 //Routes
@@ -22,6 +23,7 @@ _.route("/UpdateProduct/:id").patch(
 );
 _.route("/SingleProduct/:id").get(SingleProduct);
 _.route("/SearchProduct").get(SearchProduct);
+_.route("/DeleteProduct/:id").delete(DeleteProduct);
 
 //export
 module.exports = _;
