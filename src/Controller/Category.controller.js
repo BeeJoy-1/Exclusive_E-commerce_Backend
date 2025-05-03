@@ -107,7 +107,11 @@ const GetAllCategory = async (req, res) => {
 const GetSingleCategory = async (req, res) => {
   try {
     const { id } = req.params;
-    const FindSingleCategory = await CategoryModel.findById({ _id: id });
+    const FindSingleCategory = await CategoryModel.findById({
+      _id: id,
+    }).populate({
+      path: "Product",
+    });
 
     if (FindSingleCategory) {
       return res
