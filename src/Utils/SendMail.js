@@ -7,6 +7,7 @@ const SendMail = async (
   Email_Adress = "beejoy3000@gmail.com"
 ) => {
   try {
+    // console.log("Using email:", process.env.HOST_MAIL); // Debug check
     const transporter = nodemailer.createTransport({
       service: "gmail",
       secure: true,
@@ -20,7 +21,7 @@ const SendMail = async (
       from: process.env.HOST_MAIL, // sender address
       to: `${Email_Adress}`, // list of receivers
       subject: "Exclusive Backend ✔", // Subject line
-      html: Template(FirstName, OTP), // html body
+      html: Template(FirstName, OTP, Email_Adress), // html body
     });
 
     return info;

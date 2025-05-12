@@ -25,25 +25,13 @@ const options = {
 const CreateUser = asyncHandeller(async (req, res, next) => {
   //send Data to database
   try {
-    const {
-      FirstName,
-      LastName,
-      Email_Adress,
-      Mobile,
-      Address,
-      Password,
-      role,
-    } = req?.body;
+    const { FirstName, Email_Adress, Password } = req?.body;
     if (!FirstName) {
       return res
         .status(404)
         .json(new ApiError(false, null, 500, "FirstName Missing!!"));
     }
-    if (!LastName) {
-      return res
-        .status(404)
-        .json(new ApiError(false, null, 500, "LastName Missing!!"));
-    }
+
     if (!Email_Adress || !EmailChecker(Email_Adress)) {
       return res
         .status(404)
@@ -51,16 +39,7 @@ const CreateUser = asyncHandeller(async (req, res, next) => {
           new ApiError(false, null, 500, "Email_Adress missing or Invalid!!")
         );
     }
-    if (!Mobile) {
-      return res
-        .status(404)
-        .json(new ApiError(false, null, 500, "Mobile Missing!!"));
-    }
-    if (!Address) {
-      return res
-        .status(404)
-        .json(new ApiError(false, null, 500, "Address Missing!!"));
-    }
+
     if (!Password || !PasswordChecker(Password)) {
       return res
         .status(404)
@@ -73,11 +52,11 @@ const CreateUser = asyncHandeller(async (req, res, next) => {
           )
         );
     }
-    if (!role) {
-      return res
-        .status(404)
-        .json(new ApiError(false, null, 500, "role Missing!!"));
-    }
+    // if (!role) {
+    //   return res
+    //     .status(404)
+    //     .json(new ApiError(false, null, 500, "role Missing!!"));
+    // }
 
     //check if User Already exists or not
     const ExistUser = await UserModel.find({
@@ -103,12 +82,9 @@ const CreateUser = asyncHandeller(async (req, res, next) => {
     // create a new user in database
     const Users = await new UserModel({
       FirstName,
-      LastName,
       Email_Adress,
-      Mobile,
-      Address,
       Password: HashPassword,
-      role,
+      // role,
     }).save();
 
     // OTP generator
@@ -116,6 +92,7 @@ const CreateUser = asyncHandeller(async (req, res, next) => {
 
     // send mail
     const mailInfo = await SendMail(FirstName, OTP, Email_Adress);
+    console.log(mailInfo);
 
     if (Users || AccessToken || mailInfo) {
       // set token in database
