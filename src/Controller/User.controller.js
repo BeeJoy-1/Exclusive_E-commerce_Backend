@@ -211,7 +211,7 @@ const OTPmatchController = async (req, res) => {
     }
 
     const ExistedEmailinDb = await UserModel.findOne({
-      $or: [{ Email_Adress: Email_Adress }, { OTP: OTP }],
+      $and: [{ OTP: OTP }, { Email_Adress: Email_Adress }],
     });
     if (ExistedEmailinDb) {
       ExistedEmailinDb.OTP = null;
@@ -221,6 +221,7 @@ const OTPmatchController = async (req, res) => {
         .status(200)
         .json(new ApiResponse(true, null, 200, "OTP Verify Successfull", null));
     }
+    return res.status(404).json(new ApiError(false, null, 400, `OTP Invalid!`));
   } catch (error) {
     return res
       .status(404)
