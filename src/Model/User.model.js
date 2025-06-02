@@ -22,17 +22,17 @@ const UserSchema = new Schema(
       trim: true,
       unique: true,
     },
-    Mobile: {
-      type: Number,
-      // required: [true, "Mobile number Missing!"],
-      trim: true,
-      unique: true,
-      // max: [11, "Invalid Phone Number"],
-    },
-    Address: {
-      type: String,
-      // required: [true, "Address Missing!"],
-    },
+    // Mobile: {
+    //   type: Number,
+    //   // required: [true, "Mobile number Missing!"],
+    //   trim: true,
+    //   unique: true,
+    //   // max: [11, "Invalid Phone Number"],
+    // },
+    // Address: {
+    //   type: String,
+    //   // required: [true, "Address Missing!"],
+    // },
     Password: {
       type: String,
       required: true,
