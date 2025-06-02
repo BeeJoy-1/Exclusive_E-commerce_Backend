@@ -145,6 +145,8 @@ const CreateUser = asyncHandeller(async (req, res, next) => {
 const LoginController = async (req, res) => {
   try {
     const { Email_Adress, Password } = req.body;
+
+    // Email validation
     if (!Email_Adress || !EmailChecker(Email_Adress)) {
       return res
         .status(404)
@@ -152,6 +154,8 @@ const LoginController = async (req, res) => {
           new ApiError(false, null, 500, "Email_Adress missing or Invalid!!")
         );
     }
+
+    // Password validation
     if (!Password || !PasswordChecker(Password)) {
       return res
         .status(404)
@@ -165,37 +169,56 @@ const LoginController = async (req, res) => {
         );
     }
 
-    //Find User
+    // Find user
     const FindUser = await UserModel.findOne({ Email_Adress: Email_Adress });
-    const UserPassValid = DecodePass(Password, FindUser?.Password);
 
-    //Create Access Token
+    // User not found
+    if (!FindUser) {
+      return res
+        .status(404)
+        .json(new ApiError(false, null, 404, "User not found!"));
+    }
+
+    // Compare password (make sure to await it)
+    const UserPassValid = await DecodePass(Password, FindUser.Password);
+
+    if (!UserPassValid) {
+      return res
+        .status(401)
+        .json(new ApiError(false, null, 401, "Credential Invalid!."));
+    }
+
+    // Generate token
     let AccessToken = await generateToken(Email_Adress);
 
-    if (UserPassValid) {
-      return res
-        .status(200)
-        .cookie("AccessToken", AccessToken, options)
-        .json(
-          new ApiResponse(
-            true,
-            {
-              FirstName: FindUser?.FirstName,
-              LastName: FindUser?.LastName,
-              Mobile: FindUser?.Mobile,
-              Email_Adress: FindUser?.Email_Adress,
-            },
-            200,
-            "Login Successfull",
-            null
-          )
-        );
-    }
+    // Send response
+    return res
+      .status(200)
+      .cookie("AccessToken", AccessToken, options)
+      .json(
+        new ApiResponse(
+          true,
+          {
+            FirstName: FindUser.FirstName,
+            LastName: FindUser.LastName,
+            Mobile: FindUser.Mobile,
+            Email_Adress: FindUser.Email_Adress,
+          },
+          200,
+          "Login Successful",
+          null
+        )
+      );
   } catch (error) {
     return res
-      .status(404)
+      .status(500)
       .json(
-        new ApiError(false, null, 400, `Login controller error : ${error}`)
+        new ApiError(
+          false,
+          null,
+          500,
+          `Login controller error: ${error.message}`
+        )
       );
   }
 };
